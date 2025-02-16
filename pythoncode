@@ -1,0 +1,205 @@
+from ultralytics import YOLO
+import os
+import cv2
+import cvzone
+import math
+import time
+from tkinter import *
+from tkinter import Label
+from tkinter import Button
+
+# from tkinter import filedialog
+# file1=filedialog.askopenfilename()
+
+# import fileinput
+window=Tk()
+window.geometry("1920x1080")
+bg=PhotoImage(file="obj.png")
+window.iconphoto(False,bg)
+l=Label(window,image=bg)
+l.pack(pady=0)
+l1=Label(window,text=" welcome to object detection software",bg="blue",font=30)
+l1.place(x=100,y=10,height=30,width=1080)
+# l2=Label(window, text="click for real time object detection", bg="gray",font=30)
+# l2.place(x=300,y=100,height=30,width=500)
+
+
+
+#
+#
+model = YOLO("yolov8l.pt")
+
+classNames = ["person", "bicycle", "car", "motorbike", "aeroplane", "bus", "train", "truck", "boat",
+              "traffic light", "fire hydrant", "stop sign", "parking meter", "bench", "bird", "cat",
+              "dog", "horse", "sheep", "cow", "elephant", "bear", "zebra", "giraffe", "backpack", "umbrella",
+              "handbag", "tie", "suitcase", "frisbee", "skis", "snowboard", "sports ball", "kite", "baseball bat",
+              "baseball glove", "skateboard", "surfboard", "tennis racket", "bottle", "wine glass", "cup",
+              "fork", "knife", "spoon", "bowl", "banana", "apple", "sandwich", "orange", "broccoli",
+              "carrot", "hot dog", "pizza", "donut", "cake", "chair", "sofa", "pottedplant", "bed",
+              "diningtable", "toilet", "tvmonitor", "laptop", "mouse", "remote", "keyboard", "cell phone",
+              "microwave", "oven", "toaster", "sink", "refrigerator", "book", "clock", "vase", "scissors",
+              "teddy bear", "hair drier", "pen"
+              ]
+class2=["car"]
+
+# prev_frame_time = 0
+# new_frame_time = 0
+def Realtime():
+    prev_frame_time = 0
+    new_frame_time = 0
+    cap = cv2.VideoCapture(0)  # For Webcam
+    # cap = cv2.VideoCapture("../Videos/cars.mp4")  # For Video
+    cap.set(3, 1280)
+    cap.set(4, 720)
+    # cap = cv2.VideoCapture("../Videos/motorbikes.mp4")  # For Video
+
+    while True:
+        new_frame_time = time.time()
+        success, img = cap.read()
+        results = model(img, stream=True)
+        for r in results:
+            boxes = r.boxes
+            for box in boxes:
+                # Bounding Box
+                x1, y1, x2, y2 = box.xyxy[0]
+                x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
+                # cv2.rectangle(img,(x1,y1),(x2,y2),(255,0,255),3)
+                w, h = x2 - x1, y2 - y1
+                cvzone.cornerRect(img, (x1, y1, w, h))
+                # Confidence
+                conf = math.ceil((box.conf[0] * 100)) / 100
+                # Class Name
+                cls = int(box.cls[0])
+
+                cvzone.putTextRect(img, f'{classNames[cls]} {conf}', (max(0, x1), max(35, y1)), scale=1, thickness=1)
+
+        fps = 1 / (new_frame_time - prev_frame_time)
+        prev_frame_time = new_frame_time
+        print(fps)
+
+        cv2.imshow("Image", img)
+        cv2.waitKey(1)
+def carExample():
+    prev_frame_time = 0
+    new_frame_time = 0
+    # cap = cv2.VideoCapture(0)  # For Webcam
+    cap = cv2.VideoCapture("cars.mp4")  # For Video
+    cap.set(3, 1280)
+    cap.set(4, 720)
+    # cap = cv2.VideoCapture("../Videos/motorbikes.mp4")  # For Video
+
+    while True:
+        new_frame_time = time.time()
+        success, img = cap.read()
+        results = model(img, stream=True)
+        for r in results:
+            boxes = r.boxes
+            for box in boxes:
+                # Bounding Box
+                x1, y1, x2, y2 = box.xyxy[0]
+                x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
+                # cv2.rectangle(img,(x1,y1),(x2,y2),(255,0,255),3)
+                w, h = x2 - x1, y2 - y1
+                cvzone.cornerRect(img, (x1, y1, w, h))
+                # Confidence
+                conf = math.ceil((box.conf[0] * 100)) / 100
+                # Class Name
+                cls = int(box.cls[0])
+
+                cvzone.putTextRect(img, f'{classNames[cls]} {conf}', (max(0, x1), max(35, y1)), scale=1, thickness=1)
+
+        fps = 1 / (new_frame_time - prev_frame_time)
+        prev_frame_time = new_frame_time
+        print(fps)
+
+        cv2.imshow("Image", img)
+        cv2.waitKey(1)
+def bikeExample():
+    prev_frame_time = 0
+    new_frame_time = 0
+    # cap = cv2.VideoCapture(0)  # For Webcam
+    cap = cv2.VideoCapture("motorbikes.mp4")  # For Video
+    cap.set(3, 1280)
+    cap.set(4, 720)
+    # cap = cv2.VideoCapture("../Videos/motorbikes.mp4")  # For Video
+
+    while True:
+        new_frame_time = time.time()
+        success, img = cap.read()
+        results = model(img, stream=True)
+        for r in results:
+            boxes = r.boxes
+            for box in boxes:
+                # Bounding Box
+                x1, y1, x2, y2 = box.xyxy[0]
+                x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
+                # cv2.rectangle(img,(x1,y1),(x2,y2),(255,0,255),3)
+                w, h = x2 - x1, y2 - y1
+                cvzone.cornerRect(img, (x1, y1, w, h))
+                # Confidence
+                conf = math.ceil((box.conf[0] * 100)) / 100
+                # Class Name
+                cls = int(box.cls[0])
+
+                cvzone.putTextRect(img, f'{classNames[cls]} {conf}', (max(0, x1), max(35, y1)), scale=1, thickness=1)
+
+        fps = 1 / (new_frame_time - prev_frame_time)
+        prev_frame_time = new_frame_time
+        print(fps)
+
+        cv2.imshow("Image", img)
+        cv2.waitKey(1)
+
+
+def sample():
+    prev_frame_time = 0
+    new_frame_time = 0
+    # cap = cv2.VideoCapture(0)  # For Webcam
+    cap = cv2.VideoCapture("adiyogii.mp4")  # For Video
+    cap.set(3, 1280)
+    cap.set(4, 720)
+    # cap = cv2.VideoCapture("../Videos/motorbikes.mp4")  # For Video
+
+    while True:
+        new_frame_time = time.time()
+        success, img = cap.read()
+        results = model(img, stream=True)
+        for r in results:
+            boxes = r.boxes
+            for box in boxes:
+                # Bounding Box
+                x1, y1, x2, y2 = box.xyxy[0]
+                x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
+                # cv2.rectangle(img,(x1,y1),(x2,y2),(255,0,255),3)
+                w, h = x2 - x1, y2 - y1
+                cvzone.cornerRect(img, (x1, y1, w, h))
+                # Confidence
+                conf = math.ceil((box.conf[0] * 100)) / 100
+                # Class Name
+                cls = int(box.cls[0])
+
+                cvzone.putTextRect(img, f'{classNames[cls]} {conf}', (max(0, x1), max(35, y1)), scale=1, thickness=1)
+
+        fps = 1 / (new_frame_time - prev_frame_time)
+        prev_frame_time = new_frame_time
+        print(fps)
+
+        cv2.imshow("Image", img)
+        cv2.waitKey(1)
+
+B1=Button(text="car example detection",bg="green",font=30,command=carExample)
+B1.place(x=450,y=150,height=50,width=300)
+
+B2=Button(text="click for real time object detection", bg="green",font=30, command=Realtime)
+B2.place(x=450,y=220,height=50, width=300)
+B3=Button(text="bike example detection", bg="green",font=30, command=bikeExample)
+B3.place(x=450,y=300,height=50, width=300)
+
+B4=Button(text="aadi yogi", bg="green",font=30,command=sample)
+B4.place(x=450,y=370,height=50, width=300)
+
+# file1=Label(window,text="please select a file (video or image)",bg="orange",font=30)
+# file1.place(x=380,y=100,height=50,width=500)
+
+
+window.mainloop()
